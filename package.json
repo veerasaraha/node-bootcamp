@@ -1,0 +1,20 @@
+{
+  "name": "bootcamp",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Complete Node.js, Express and MongoDB Bootcamp.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/veer-a1505/node-bootcamp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/veer-a1505/node-bootcamp/issues"
+  },
+  "homepage": "https://github.com/veer-a1505/node-bootcamp#readme"
+}
