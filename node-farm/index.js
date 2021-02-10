@@ -1,6 +1,6 @@
 import fs from "fs"
 import http from "http"
-import url from "url"
+import path from "path"
 
 /////////////////////////////////////////////////////////
 // FS MODULE //
@@ -36,18 +36,22 @@ console.log("Reading file int the backgroud...")
 // HTTP MODULE //
 /////////////////////////////////////////////////////////
 
+const data = fs.readFileSync(`./dev-data/data.json`, "utf-8")
+
+const productData = JSON.parse(data)
+
 const server = http.createServer((req, res) => {
   const pathName = req.url
-  console.log(pathName)
 
   if (pathName === "/" || pathName === "/overview") {
     res.end("This is OVERVIEW page!")
   } else if (pathName === "/product") {
     res.end("This is PRODUCT page!")
+  } else if (pathName === "/api") {
+    res.writeHead(200, { "Content-type": "application/json" })
+
+    res.end(data)
   } else {
-    res.writeHead(404, {
-      "Contetnt-type": "text/html",
-    })
     res.end("<h1>Page Not Found</h1>")
   }
 })
