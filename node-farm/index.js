@@ -36,6 +36,32 @@ console.log("Reading file int the backgroud...")
 // HTTP MODULE //
 /////////////////////////////////////////////////////////
 
+const replaceTemplate = (temp, product) => {
+  let output = temp.replace(/{%PRODUCT_NAME%}/g, product.productName)
+  output = output.replace(/{%PRODUCT_IMAGE%}/g, product.image)
+  output = output.replace(/{%PRODUCT_FROM%}/g, product.from)
+  output = output.replace(/{%PRODUCT_NUTR%}/g, product.nutrients)
+  output = output.replace(/{%PRODUCT_QUANTITY%}/g, product.quantity)
+  output = output.replace(/{%PRODUCT_PRICE%}/g, product.price)
+  output = output.replace(/{%PRODUCT_DESC%}/g, product.description)
+  output = output.replace(/{%ID%}/g, product.id)
+
+  if (!product.organic) {
+    output = output.replace(/{%NOT_ORGANIC%}/g, "not-organic")
+  }
+  return output
+}
+
+const tempOverview = fs.readFileSync(
+  `./templates/template-overview.html`,
+  "utf-8"
+)
+const tempCard = fs.readFileSync(`./templates/template-card.html`, "utf-8")
+const tempProduct = fs.readFileSync(
+  `./templates/template-product.html`,
+  "utf-8"
+)
+
 const data = fs.readFileSync(`./dev-data/data.json`, "utf-8")
 
 const productData = JSON.parse(data)
@@ -43,15 +69,28 @@ const productData = JSON.parse(data)
 const server = http.createServer((req, res) => {
   const pathName = req.url
 
+  //OVERVIEW
   if (pathName === "/" || pathName === "/overview") {
-    res.end("This is OVERVIEW page!")
-  } else if (pathName === "/product") {
+    res.writeHead(200, { "Content-type": "text/html" })
+    const cardsHtml = productData
+      .map((el) => replaceTemplate(tempCard, el))
+      .join("")
+
+    const output = tempOverview.replace("{%PRODUCT_CARDS%}", cardsHtml)
+    res.end(output)
+  }
+  //PRODUCT
+  else if (pathName === "/product") {
     res.end("This is PRODUCT page!")
-  } else if (pathName === "/api") {
+  }
+  //API
+  else if (pathName === "/api") {
     res.writeHead(200, { "Content-type": "application/json" })
 
     res.end(data)
-  } else {
+  }
+  //PAGE_NOT_FOUND
+  else {
     res.end("<h1>Page Not Found</h1>")
   }
 })
