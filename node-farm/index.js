@@ -1,6 +1,6 @@
 import fs from "fs"
-import http, { Server } from "http"
-import { Http2ServerResponse } from "http2"
+import http from "http"
+import url from "url"
 
 /////////////////////////////////////////////////////////
 // FS MODULE //
@@ -37,9 +37,21 @@ console.log("Reading file int the backgroud...")
 /////////////////////////////////////////////////////////
 
 const server = http.createServer((req, res) => {
-  res.end("Hello from the server!!!")
+  const pathName = req.url
+  console.log(pathName)
+
+  if (pathName === "/" || pathName === "/overview") {
+    res.end("This is OVERVIEW page!")
+  } else if (pathName === "/product") {
+    res.end("This is PRODUCT page!")
+  } else {
+    res.writeHead(404, {
+      "Contetnt-type": "text/html",
+    })
+    res.end("<h1>Page Not Found</h1>")
+  }
 })
 
-server.listen(3000, () => {
-  console.log("Listening server : PORT 3000")
+server.listen(8000, () => {
+  console.log("Listening server : PORT 8000")
 })
