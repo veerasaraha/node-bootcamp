@@ -6,6 +6,11 @@ const app = express();
 //middleware
 app.use(express.json());
 
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString();
+  next();
+});
+
 const filePath = `${process.cwd()}/natours/devData/data`;
 
 const tours = JSON.parse(readFileSync(`${filePath}/toursSimple.json`, 'utf-8'));
@@ -15,6 +20,7 @@ const tours = JSON.parse(readFileSync(`${filePath}/toursSimple.json`, 'utf-8'));
 const getAllTours = (req, res) => {
   res.status(200).json({
     status: 'success',
+    requestedAt: req.requestTime,
     results: tours.length,
     data: {
       tours,
