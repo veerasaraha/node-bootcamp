@@ -6,7 +6,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon natours/app.js --prefix"
+    "start": "nodemon natours/server.js --prefix"
   },
   "repository": {
     "type": "git",
