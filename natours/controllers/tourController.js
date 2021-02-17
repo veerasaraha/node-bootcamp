@@ -15,6 +15,17 @@ const checkID = (req, res, next, value) => {
   next();
 };
 
+const checkBody = (req, res, next) => {
+  if (!req.body.name || !req.body.price) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Missing name or price ',
+    });
+  }
+
+  next();
+};
+
 //HANDLER FUNCTIONS
 const getAllTours = (req, res) => {
   res.status(200).json({
@@ -72,4 +83,4 @@ const deleteTour = (req, res) => {
   });
 };
 
-export { getAllTours, createTour, getTour, updateTour, deleteTour, checkID };
+export { getAllTours, createTour, getTour, updateTour, deleteTour, checkID, checkBody };
