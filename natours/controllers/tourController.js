@@ -1,30 +1,4 @@
-// import { readFileSync, writeFile } from 'fs';
-
-// const filePath = `${process.cwd()}/natours/devData/data`;
-// const tours = JSON.parse(readFileSync(`${filePath}/toursSimple.json`, 'utf-8'));
-
-//MIDDLEWARE FUNCTIONS
-// const checkID = (req, res, next, value) => {
-//   const id = Number(value);
-//   if (id >= tours.length) {
-//     return res.status(404).json({
-//       status: 'fail',
-//       message: 'Invalid ID',
-//     });
-//   }
-//   next();
-// };
-
-const checkBody = (req, res, next) => {
-  if (!req.body.name || !req.body.price) {
-    return res.status(400).json({
-      status: 'fail',
-      message: 'Missing name or price ',
-    });
-  }
-
-  next();
-};
+import Tour from '../models/tourModel.js';
 
 //HANDLER FUNCTIONS
 const getAllTours = (req, res) => {
@@ -51,13 +25,22 @@ const getTour = (req, res) => {
   });
 };
 
-const createTour = (req, res) => {
-  res.status(201).json({
-    status: 'success',
-    // data: {
-    //   tour: newTour,
-    // },
-  });
+const createTour = async (req, res) => {
+  try {
+    const newTour = await Tour.create(req.body);
+
+    res.status(201).json({
+      status: 'success',
+      data: {
+        tour: newTour,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      message: error,
+    });
+  }
 };
 
 const updateTour = (req, res) => {
@@ -76,4 +59,4 @@ const deleteTour = (req, res) => {
   });
 };
 
-export { getAllTours, createTour, getTour, updateTour, deleteTour, checkBody };
+export { getAllTours, createTour, getTour, updateTour, deleteTour };
