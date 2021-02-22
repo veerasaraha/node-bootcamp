@@ -7,7 +7,6 @@ import userRouter from './routes/userRoutes.js';
 const app = express();
 
 //MIDDLEWARES
-console.log(process.env.PORT, process.env.NODE_ENV);
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
