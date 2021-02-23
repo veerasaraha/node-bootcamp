@@ -31,6 +31,21 @@ const getAllTours = async (req, res) => {
       query = query.select('-__v');
     }
 
+    //PAGE SORTING
+
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 10;
+    const skip = (page - 1) * limit;
+
+    query = query.skip(skip).limit(limit);
+
+    if (req.query.page) {
+      const tournCount = await Tour.countDocuments();
+      if (skip >= tournCount) {
+        throw new Error('This page does not exit');
+      }
+    }
+
     //EXECUTE QUERY
     const tours = await query;
 
