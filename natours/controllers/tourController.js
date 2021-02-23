@@ -14,10 +14,21 @@ const getAllTours = async (req, res) => {
 
     let query = Tour.find(JSON.parse(queryString));
 
+    //SORTING
     if (req.query.sort) {
       const sortBy = req.query.sort.split(',').join(' ');
       console.log(sortBy);
       query = query.sort(sortBy);
+    }
+
+    //FIELDS SORTING
+    if (req.query.fields) {
+      console.log(req.query.fields);
+      const fields = req.query.fields.split(',').join(' ');
+      console.log(fields);
+      query = query.select(fields);
+    } else {
+      query = query.select('-__v');
     }
 
     //EXECUTE QUERY
