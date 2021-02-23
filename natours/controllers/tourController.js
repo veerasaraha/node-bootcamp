@@ -3,7 +3,15 @@ import Tour from '../models/tourModel.js';
 //HANDLER FUNCTIONS
 const getAllTours = async (req, res) => {
   try {
-    const tours = await Tour.find();
+    //BUILD QUERY
+    const queryObject = { ...req.query };
+    const excludedFields = ['page', 'limit', 'sort', 'fields'];
+    excludedFields.forEach((el) => delete queryObject[el]);
+
+    const query = Tour.find(queryObject);
+
+    //EXECUTE QUERY
+    const tours = await query;
     res.status(200).json({
       status: 'success',
       results: tours.length,
