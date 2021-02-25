@@ -6,7 +6,8 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon natours/server.js --prefix"
+    "start": "nodemon natours/server.js --prefix",
+    "debug": "ndb server.js"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,7 @@
     "mongoose": "^5.11.15",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.7",
-    "superagent": "^6.1.0"
+    "superagent": "^6.1.0",
+    "validator": "^13.5.2"
   }
 }
