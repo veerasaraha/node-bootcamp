@@ -23,10 +23,10 @@ const getAllTours = async (req, res) => {
         tours,
       },
     });
-  } catch (error) {
+  } catch (err) {
     res.status(404).json({
       status: 'fail',
-      message: error.message,
+      message: err.message,
     });
   }
 };
@@ -40,10 +40,10 @@ const getTour = async (req, res) => {
         tour,
       },
     });
-  } catch (error) {
+  } catch (err) {
     res.status(404).json({
       status: 'fail',
-      message: error,
+      message: err,
     });
   }
 };
@@ -58,7 +58,7 @@ const createTour = async (req, res) => {
         tour: newTour,
       },
     });
-  } catch (error) {
+  } catch (err) {
     res.status(400).json({
       status: 'fail',
       message: 'Invalid data',
@@ -76,10 +76,10 @@ const updateTour = async (req, res) => {
         tour,
       },
     });
-  } catch (error) {
+  } catch (err) {
     res.status(404).json({
       status: 'fail',
-      message: error,
+      message: err,
     });
   }
 };
@@ -92,10 +92,10 @@ const deleteTour = async (req, res) => {
       status: 'success',
       data: null,
     });
-  } catch (error) {
+  } catch (err) {
     res.status(404).json({
       status: 'fail',
-      message: error,
+      message: err,
     });
   }
 };
@@ -133,10 +133,10 @@ const getToursStats = async (req, res) => {
         stats,
       },
     });
-  } catch (error) {
+  } catch (err) {
     res.status(404).json({
       status: 'fail',
-      message: error,
+      message: err,
     });
   }
 };
@@ -188,10 +188,10 @@ const getMonthlyPlan = async (req, res) => {
         plan,
       },
     });
-  } catch (error) {
+  } catch (err) {
     res.status(404).json({
       status: 'fail',
-      message: error,
+      message: err,
     });
   }
 };
