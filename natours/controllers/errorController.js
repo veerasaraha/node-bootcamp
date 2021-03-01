@@ -12,6 +12,13 @@ const handleDuplicateFieldsDB = (err) => {
   return new AppError(message, 400);
 };
 
+const handleValidatonErrorDB = (err) => {
+  const errors = Object.values(err.errors).map((ele) => ele.message);
+
+  const message = `Invalid input data : ${errors.join('. ')} `;
+  return new AppError(message, 400);
+};
+
 const sendErrorDev = (err, res) => {
   res.status(err.statusCode).json({
     status: err.status,
@@ -30,7 +37,6 @@ const sendErrorProd = (err, res) => {
     });
   } else {
     //programming or other unknown error: don't leak error details
-    console.error('ERROR', err);
 
     res.status(500).json({
       status: 'error',
@@ -46,10 +52,15 @@ export default (err, req, res, next) => {
   if (process.env.NODE_ENV === 'development') {
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === 'production') {
-    let error = { ...err };
+    let error = err;
 
-    if (error.name === 'CastError') error = handleCastErrorDB(error);
-    if (error.code === 11000) error = handleDuplicateFieldsDB(error);
+    if (error.name === 'CastError') {
+      error = handleCastErrorDB(error);
+    } else if (error.code === 11000) {
+      error = handleDuplicateFieldsDB(error);
+    } else if (error.name === 'ValidationError') {
+      error = handleValidatonErrorDB(error);
+    }
 
     sendErrorProd(error, res);
   }
