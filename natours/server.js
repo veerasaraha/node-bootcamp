@@ -14,6 +14,13 @@ mongoose
   .then(() => console.log(`DB Connection successful`));
 
 const PROT = process.env.PORT || 9000;
-app.listen(PROT, () => {
+const server = app.listen(PROT, () => {
   console.log(`App running on port ${PROT}...`);
+});
+
+process.on('unhandledRejection', (err) => {
+  console.log(err.name, err.message);
+  server.close(() => {
+    process.exit(1);
+  });
 });
