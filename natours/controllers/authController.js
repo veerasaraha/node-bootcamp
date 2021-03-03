@@ -15,6 +15,7 @@ const signUp = catchAsync(async (req, res, next) => {
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
     passwordChangedAt: req.body.passwordChangedAt,
+    role: req.body.role,
   });
 
   const token = signToken(newUser._id);
@@ -73,9 +74,18 @@ const protectRoute = catchAsync(async (req, res, next) => {
   if (currentUser.changePasswordAfter(decoded.iat)) {
     return next(new AppError('User recently changed password! Please log in again.', 401));
   }
-
+  //GRANT ACCESS TO PROTECTED ROUTE
   req.user = currentUser;
   next();
 });
 
-export { signUp, login, protectRoute };
+const restrictTo = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(new AppError('You do not have permission to perform this action', 403));
+    }
+    next();
+  };
+};
+
+export { signUp, login, protectRoute, restrictTo };
