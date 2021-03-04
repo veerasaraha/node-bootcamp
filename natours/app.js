@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 dotenv.config({ path: `${process.cwd()}/natours/.env` });
 import morgan from 'morgan';
+import rateLimit from 'express-rate-limit';
 import AppError from './utils/appError.js';
 import globalErrorHandler from './controllers/errorController.js';
 import tourRouter from './routes/tourRoutes.js';
@@ -14,8 +15,17 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
+// request limiting set to 100 per hour
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: 'Too many requests from this IP, please try again in an hour!',
+});
+
 app.use(express.json());
 app.use(express.static(`${process.cwd()}/natours/public`));
+
+app.use('/api', limiter);
 
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
