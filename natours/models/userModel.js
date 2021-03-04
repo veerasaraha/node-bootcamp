@@ -46,6 +46,13 @@ const userSchema = new mongoose.Schema({
   passwordResetExpires: Date,
 });
 
+userSchema.pre('save', function (next) {
+  if (!this.isModified('password') || this.isNew) return next();
+
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
 userSchema.pre('save', async function (next) {
   //Only run this function if password was actually modified
   if (!this.isModified('password')) return next();
@@ -78,6 +85,7 @@ userSchema.methods.createpasswordResetToken = function () {
   this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
 
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+  console.log({ resetToken }, this.passwordResetToken, this.passwordResetExpires);
 
   return resetToken;
 };
