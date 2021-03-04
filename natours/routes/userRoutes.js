@@ -1,5 +1,12 @@
 import express from 'express';
-import { getAllUsers, createUser, getUser, updateUser, deleteUser } from './../controllers/userController.js';
+import {
+  getAllUsers,
+  createUser,
+  getUser,
+  updateUser,
+  deleteUser,
+  updateMyProfile,
+} from './../controllers/userController.js';
 import {
   signUp,
   login,
@@ -15,6 +22,8 @@ userRouter.post('/login', login);
 userRouter.post('/forgotPassword', forgotPassword);
 userRouter.patch('/resetPassword/:token', resetPassword);
 userRouter.patch('/updatePassword/', protectRoute, updatePassword);
+
+userRouter.patch('/updateProfile', protectRoute, updateMyProfile);
 
 userRouter.route('/').get(getAllUsers).post(createUser);
 userRouter.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);
