@@ -127,6 +127,7 @@ const forgotPassword = catchAsync(async (req, res, next) => {
     return next(new AppError('There was an error sending email. Try again later', 500));
   }
 });
+
 const resetPassword = catchAsync(async (req, res, next) => {
   //get user based on the token
   const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
