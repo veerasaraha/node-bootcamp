@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import xss from 'xss-clean';
 import mongoSanitize from 'express-mongo-sanitize';
+import hpp from 'hpp';
 
 import AppError from './utils/appError.js';
 import globalErrorHandler from './controllers/errorController.js';
@@ -37,6 +38,13 @@ app.use(mongoSanitize());
 
 // Data sanitization against XSS
 app.use(xss());
+
+// preventing param pollution
+app.use(
+  hpp({
+    whitelist: ['price', 'duration', 'maxGroupSize', 'difficulty', 'ratingsQuantity', 'ratingsAverage'],
+  })
+);
 
 // Serving static files
 app.use(express.static(`${process.cwd()}/natours/public`));
