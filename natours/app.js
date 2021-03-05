@@ -4,6 +4,9 @@ import dotenv from 'dotenv';
 dotenv.config({ path: `${process.cwd()}/natours/.env` });
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
+import xss from 'xss-clean';
+import mongoSanitize from 'express-mongo-sanitize';
+
 import AppError from './utils/appError.js';
 import globalErrorHandler from './controllers/errorController.js';
 import tourRouter from './routes/tourRoutes.js';
@@ -14,27 +17,33 @@ const app = express();
 // Set Security HTTP Headers
 app.use(helmet());
 
-// Devlopement Logging
+// Devlopement logging
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// Request Limiting Set To 100 Per Hour
+// Request limiting set to 100 per hour
 const limiter = rateLimit({
   max: 100,
   windowMs: 60 * 60 * 1000,
   message: 'Too many requests from this IP, please try again in an hour!',
 });
 
-// Body Parser Which Will Allow Us To Use req.body
+// Body parser which will allow us to use req.body
 app.use(express.json({ limit: '10kb' }));
 
-// Serving Static Files
+// Data sanitization against NoSQL query injection
+app.use(mongoSanitize());
+
+// Data sanitization against XSS
+app.use(xss());
+
+// Serving static files
 app.use(express.static(`${process.cwd()}/natours/public`));
 
 app.use('/api', limiter);
 
-// Test Middleware
+// Test middleware
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   next();
@@ -44,12 +53,12 @@ app.use((req, res, next) => {
 app.use('/api/tours', tourRouter);
 app.use('/api/users', userRouter);
 
-// Middleware For Unmatched Routes
+// Middleware for unmatched routes
 app.all('*', (req, res, next) => {
   next(new AppError(`can't find ${req.originalUrl} on this server`, 404));
 });
 
-// Global Error Handler Middleware
+// Global error handler middleware
 app.use(globalErrorHandler);
 
 export default app;
