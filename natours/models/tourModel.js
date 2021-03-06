@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import User from './userModel.js';
 // import validator from 'validator';
 
 const { Schema } = mongoose;
@@ -96,7 +97,9 @@ const tourSchema = new Schema(
         day: Number,
       },
     ],
+    guides: Array,
   },
+
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
@@ -105,6 +108,14 @@ const tourSchema = new Schema(
 
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
+});
+
+tourSchema.pre('save', async function (next) {
+  const guidesPromises = this.guides.map(async (id) => await User.findById(id));
+
+  this.guides = await Promise.all(guidesPromises);
+
+  next();
 });
 
 const Tour = mongoose.model('Tour', tourSchema);
