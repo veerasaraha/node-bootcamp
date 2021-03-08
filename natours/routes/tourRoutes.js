@@ -12,8 +12,11 @@ import {
 
 import { protectRoute, restrictTo } from './../controllers/authController.js';
 import { createReview } from '../controllers/reviewController.js';
+import reviewRouter from './../routes/reviewRoute.js';
 
 const tourRouter = express.Router();
+
+tourRouter.use('/:tourId/reviews', reviewRouter);
 
 tourRouter.route('/top-5-tours').get(aliasTopTours, getAllTours);
 
@@ -28,6 +31,6 @@ tourRouter
   .patch(updateTour)
   .delete(protectRoute, restrictTo('admin', 'lead-guide'), deleteTour);
 
-tourRouter.route('/:tourId/reviews').post(protectRoute, restrictTo('user'), createReview);
+// tourRouter.route('/:tourId/reviews').post(protectRoute, restrictTo('user'), createReview);
 
 export default tourRouter;
