@@ -12,6 +12,7 @@ import AppError from './utils/appError.js';
 import globalErrorHandler from './controllers/errorController.js';
 import tourRouter from './routes/tourRoutes.js';
 import userRouter from './routes/userRoutes.js';
+import reviewRouter from './routes/reviewRoute.js';
 const app = express();
 
 //MIDDLEWARES
@@ -60,6 +61,7 @@ app.use((req, res, next) => {
 //ROUTES
 app.use('/api/tours', tourRouter);
 app.use('/api/users', userRouter);
+app.use('/api/reviews', reviewRouter);
 
 // Middleware for unmatched routes
 app.all('*', (req, res, next) => {
