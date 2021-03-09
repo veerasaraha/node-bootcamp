@@ -1,35 +1,31 @@
 import express from 'express';
-import {
-  getAllTours,
-  createTour,
-  getTour,
-  updateTour,
-  deleteTour,
-  aliasTopTours,
-  getToursStats,
-  getMonthlyPlan,
-} from './../controllers/tourController.js';
+import * as tourController from './../controllers/tourController.js';
 
-import { protectRoute, restrictTo } from './../controllers/authController.js';
-import { createReview } from '../controllers/reviewController.js';
+import * as authController from './../controllers/authController.js';
 import reviewRouter from './../routes/reviewRoute.js';
 
 const tourRouter = express.Router();
 
 tourRouter.use('/:tourId/reviews', reviewRouter);
 
-tourRouter.route('/top-5-tours').get(aliasTopTours, getAllTours);
+tourRouter.route('/top-5-tours').get(tourController.aliasTopTours, tourController.getAllTours);
 
-tourRouter.route('/tour-stats').get(getToursStats);
+tourRouter.route('/tour-stats').get(tourController.getToursStats);
 
-tourRouter.route('/monthly-plan/:year').get(getMonthlyPlan);
+tourRouter
+  .route('/monthly-plan/:year')
+  .get(authController.protectRoute, authController.restrictTo('admin', 'lead-guide'), tourController.getMonthlyPlan);
 
-tourRouter.route('/').get(protectRoute, getAllTours).post(createTour);
+tourRouter
+  .route('/')
+  .get(tourController.getAllTours)
+  .post(authController.protectRoute, authController.restrictTo('admin', 'lead-guide'), tourController.createTour);
+
 tourRouter
   .route('/:id')
-  .get(getTour)
-  .patch(updateTour)
-  .delete(protectRoute, restrictTo('admin', 'lead-guide'), deleteTour);
+  .get(tourController.getTour)
+  .patch(authController.protectRoute, authController.restrictTo('admin', 'lead-guide'), tourController.updateTour)
+  .delete(authController.protectRoute, authController.restrictTo('admin', 'lead-guide'), tourController.deleteTour);
 
 // tourRouter.route('/:tourId/reviews').post(protectRoute, restrictTo('user'), createReview);
 

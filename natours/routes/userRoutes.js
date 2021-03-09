@@ -1,36 +1,25 @@
 import express from 'express';
-import {
-  getAllUsers,
-  createUser,
-  getUser,
-  updateUser,
-  deleteUser,
-  updateMyProfile,
-  deleteProfile,
-  setUserId,
-  getProfile,
-} from './../controllers/userController.js';
-import {
-  signUp,
-  login,
-  resetPassword,
-  forgotPassword,
-  updatePassword,
-  protectRoute,
-} from '../controllers/authController.js';
+import * as userController from './../controllers/userController.js';
+import * as authController from '../controllers/authController.js';
 const userRouter = express.Router();
 
-userRouter.post('/signup', signUp);
-userRouter.post('/login', login);
-userRouter.post('/forgotPassword', forgotPassword);
-userRouter.patch('/resetPassword/:token', resetPassword);
-userRouter.patch('/updatePassword/', protectRoute, updatePassword);
+userRouter.post('/signup', authController.signUp);
+userRouter.post('/login', authController.login);
+userRouter.post('/forgotPassword', authController.forgotPassword);
+userRouter.patch('/resetPassword/:token', authController.resetPassword);
 
-userRouter.patch('/updateProfile', protectRoute, updateMyProfile);
-userRouter.delete('/deleteProfile', protectRoute, deleteProfile);
-userRouter.get('/getProfile', protectRoute, setUserId, getProfile);
+// Protect all routes after this middlware
+userRouter.use(authController.protectRoute);
 
-userRouter.route('/').get(getAllUsers).post(createUser);
-userRouter.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);
+userRouter.patch('/updatePassword/', authController.updatePassword);
+userRouter.patch('/updateProfile', userController.updateMyProfile);
+userRouter.delete('/deleteProfile', userController.deleteProfile);
+userRouter.get('/getProfile', userController.setUserId, userController.getProfile);
+
+// Restrict to only admins
+userRouter.use(authController.restrictTo('admin'));
+
+userRouter.route('/').get(userController.getAllUsers).post(userController.createUser);
+userRouter.route('/:id').get(userController.getUser).patch(userController.updateUser).delete(userController.deleteUser);
 
 export default userRouter;
