@@ -2,6 +2,7 @@ import Tour from '../models/tourModel.js';
 import APIFeatures from '../utils/apiFeatures.js';
 import catchAsync from './../utils/cathAsync.js';
 import AppError from '../utils/appError.js';
+import { deleteOne } from './hanlderFactory.js';
 
 const aliasTopTours = (req, res, next) => {
   req.query.limit = '5';
@@ -65,18 +66,20 @@ const updateTour = catchAsync(async (req, res, next) => {
   });
 });
 
-const deleteTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findByIdAndDelete(req.params.id);
+const deleteTour = deleteOne(Tour);
 
-  if (!tour) {
-    return next(new AppError(`tour not found with this ID`, 404));
-  }
+// const deleteTour = catchAsync(async (req, res, next) => {
+//   const tour = await Tour.findByIdAndDelete(req.params.id);
 
-  res.status(204).json({
-    status: 'success',
-    data: null,
-  });
-});
+//   if (!tour) {
+//     return next(new AppError(`tour not found with this ID`, 404));
+//   }
+
+//   res.status(204).json({
+//     status: 'success',
+//     data: null,
+//   });
+// });
 
 const getToursStats = catchAsync(async (req, res, next) => {
   const stats = await Tour.aggregate([

@@ -1,6 +1,7 @@
 import catchAsync from '../utils/cathAsync.js';
 import User from '../models/userModel.js';
 import AppError from '../utils/appError.js';
+import { deleteOne } from './hanlderFactory.js';
 
 const filterObj = (userObj, ...allowedFields) => {
   const newObj = {};
@@ -76,11 +77,6 @@ const updateUser = (req, res) => {
   });
 };
 
-const deleteUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This rout not yet defined',
-  });
-};
+const deleteUser = deleteOne(User);
 
 export { getAllUsers, createUser, getUser, updateUser, deleteUser, updateMyProfile, deleteProfile };

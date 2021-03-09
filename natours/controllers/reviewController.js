@@ -1,5 +1,6 @@
 import Review from './../models/reviewModel.js';
 import catchAsync from '../utils/cathAsync.js';
+import { deleteOne } from './hanlderFactory.js';
 
 const createReview = catchAsync(async (req, res, next) => {
   //Allow nested routes
@@ -30,4 +31,6 @@ const getAllReviews = catchAsync(async (req, res, next) => {
   });
 });
 
-export { createReview, getAllReviews };
+const deleteReview = deleteOne(Review);
+
+export { createReview, getAllReviews, deleteReview };
