@@ -2,7 +2,7 @@ import Tour from '../models/tourModel.js';
 import APIFeatures from '../utils/apiFeatures.js';
 import catchAsync from './../utils/cathAsync.js';
 import AppError from '../utils/appError.js';
-import { deleteOne } from './hanlderFactory.js';
+import { deleteOne, updateOne, createOne } from './hanlderFactory.js';
 
 const aliasTopTours = (req, res, next) => {
   req.query.limit = '5';
@@ -40,31 +40,25 @@ const getTour = catchAsync(async (req, res, next) => {
   });
 });
 
-const createTour = catchAsync(async (req, res, next) => {
-  const newTour = await Tour.create(req.body);
+const createTour = createOne(Tour);
 
-  res.status(201).json({
-    status: 'success',
-    data: {
-      tour: newTour,
-    },
-  });
-});
+// const updateTour = catchAsync(async (req, res, next) => {
+//   const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
 
-const updateTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+//   if (!tour) {
+//     return next(new AppError(`tour not found with this ID`, 404));
+//   }
 
-  if (!tour) {
-    return next(new AppError(`tour not found with this ID`, 404));
-  }
+//   res.status(200).json({
+//     status: 'success',
+//     data: {
+//       tour,
+//     },
+//   });
+// });
 
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour,
-    },
-  });
-});
+// Do not update password with this
+const updateTour = updateOne(Tour);
 
 const deleteTour = deleteOne(Tour);
 
