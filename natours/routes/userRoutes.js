@@ -7,6 +7,8 @@ import {
   deleteUser,
   updateMyProfile,
   deleteProfile,
+  setUserId,
+  getProfile,
 } from './../controllers/userController.js';
 import {
   signUp,
@@ -26,6 +28,7 @@ userRouter.patch('/updatePassword/', protectRoute, updatePassword);
 
 userRouter.patch('/updateProfile', protectRoute, updateMyProfile);
 userRouter.delete('/deleteProfile', protectRoute, deleteProfile);
+userRouter.get('/getProfile', protectRoute, setUserId, getProfile);
 
 userRouter.route('/').get(getAllUsers).post(createUser);
 userRouter.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);

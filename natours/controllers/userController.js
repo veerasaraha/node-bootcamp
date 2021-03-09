@@ -57,4 +57,20 @@ const getUser = getOne(User);
 const updateUser = updateOne(User);
 const deleteUser = deleteOne(User);
 
-export { getAllUsers, createUser, getUser, updateUser, deleteUser, updateMyProfile, deleteProfile };
+const setUserId = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
+const getProfile = getOne(User);
+
+export {
+  getAllUsers,
+  createUser,
+  getUser,
+  updateUser,
+  deleteUser,
+  updateMyProfile,
+  deleteProfile,
+  setUserId,
+  getProfile,
+};
