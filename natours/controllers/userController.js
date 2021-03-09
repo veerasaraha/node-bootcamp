@@ -1,7 +1,7 @@
 import catchAsync from '../utils/cathAsync.js';
 import User from '../models/userModel.js';
 import AppError from '../utils/appError.js';
-import { deleteOne, updateOne } from './hanlderFactory.js';
+import { deleteOne, updateOne, getOne, getAll } from './hanlderFactory.js';
 
 const filterObj = (userObj, ...allowedFields) => {
   const newObj = {};
@@ -12,17 +12,6 @@ const filterObj = (userObj, ...allowedFields) => {
   });
   return newObj;
 };
-
-const getAllUsers = catchAsync(async (req, res) => {
-  const users = await User.find();
-  res.status(200).json({
-    status: 'success',
-    results: users.length,
-    data: {
-      users,
-    },
-  });
-});
 
 const updateMyProfile = catchAsync(async (req, res, next) => {
   //create error if user try update password
@@ -59,17 +48,12 @@ const deleteProfile = catchAsync(async (req, res, next) => {
 const createUser = (req, res) => {
   res.status(500).json({
     status: 'error',
-    message: 'This route not yet defined',
+    message: 'This route not  defined! please use siggup instead',
   });
 };
 
-const getUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route not yet defined',
-  });
-};
-
+const getAllUsers = getAll(User);
+const getUser = getOne(User);
 const updateUser = updateOne(User);
 const deleteUser = deleteOne(User);
 
