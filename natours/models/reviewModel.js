@@ -95,13 +95,13 @@ reviewSchema.post(/^findOneAnd/, async function () {
   await this.review.constructor.calcAverageRatings(this.review.tour);
 });
 
-const indexes = reviewSchema.indexes();
-console.log(indexes);
+// const indexes = reviewSchema.indexes();
+// console.log(indexes);
 
 const Review = mongoose.model('Review', reviewSchema);
 
-Review.on('index', (error) => {
-  console.log(error);
-});
+// Review.on('index', (error) => {
+//   console.log(error);
+// });
 
 export default Review;

@@ -16,6 +16,11 @@ tourRouter
   .route('/monthly-plan/:year')
   .get(authController.protectRoute, authController.restrictTo('admin', 'lead-guide'), tourController.getMonthlyPlan);
 
+tourRouter.route('/tours-within/:distance/center/:latlng/unit/:unit').get(tourController.getToursWithin);
+
+// tour-within?distance=236&center=-41,45&unit=mi
+// tour-within/236/center/-41,45/unit/mi
+
 tourRouter
   .route('/')
   .get(tourController.getAllTours)
