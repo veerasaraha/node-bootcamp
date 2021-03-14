@@ -21,6 +21,8 @@ tourRouter.route('/tours-within/:distance/center/:latlng/unit/:unit').get(tourCo
 // tour-within?distance=236&center=-41,45&unit=mi
 // tour-within/236/center/-41,45/unit/mi
 
+tourRouter.route('/distances/:latlng/unit/:unit').get(tourController.getDistances);
+
 tourRouter
   .route('/')
   .get(tourController.getAllTours)
