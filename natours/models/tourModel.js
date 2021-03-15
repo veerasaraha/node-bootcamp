@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import User from './userModel.js';
+import slugify from 'slugify';
 // import validator from 'validator';
 
 const { Schema } = mongoose;
@@ -15,6 +16,7 @@ const tourSchema = new Schema(
       maxlength: [40, 'tour name must have more or equal hen 10 characters'],
       // validate: [validator.isAlpha, 'tour name only contain characters'],
     },
+    slug: String,
     duration: {
       type: Number,
       required: [true, 'tour must have a durations'],
@@ -114,6 +116,11 @@ const tourSchema = new Schema(
 
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
+});
+
+tourSchema.pre('save', function (next) {
+  this.slug = slugify(this.name, { lower: true });
+  next();
 });
 
 // tourSchema.index({ price: 1 });
