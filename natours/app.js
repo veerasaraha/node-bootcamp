@@ -70,6 +70,14 @@ app.get('/', (req, res, next) => {
   });
 });
 
+app.get('/overview', (req, res, next) => {
+  res.status(200).render('overview', { title: 'All tours' });
+});
+
+app.get('/tour', (req, res, next) => {
+  res.status(200).render('tour', { title: 'The Forest Hiker Tour' });
+});
+
 app.use('/api/tours', tourRouter);
 app.use('/api/users', userRouter);
 app.use('/api/reviews', reviewRouter);
