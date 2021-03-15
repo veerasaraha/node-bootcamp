@@ -1,3 +1,4 @@
+import * as path from 'path';
 import express from 'express';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
@@ -47,6 +48,9 @@ app.use(
   })
 );
 
+app.set('view engine', 'pug');
+app.set('views', `${process.cwd()}/natours/views`);
+
 // Serving static files
 app.use(express.static(`${process.cwd()}/natours/public`));
 
@@ -59,6 +63,10 @@ app.use((req, res, next) => {
 });
 
 //ROUTES
+app.get('/', (req, res, next) => {
+  res.status(200).render('base');
+});
+
 app.use('/api/tours', tourRouter);
 app.use('/api/users', userRouter);
 app.use('/api/reviews', reviewRouter);
@@ -70,5 +78,7 @@ app.all('*', (req, res, next) => {
 
 // Global error handler middleware
 app.use(globalErrorHandler);
+
+console.log(`${process.cwd()}/natours`);
 
 export default app;
