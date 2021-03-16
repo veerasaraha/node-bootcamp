@@ -19,7 +19,14 @@ const app = express();
 
 //MIDDLEWARES
 // Set Security HTTP Headers
-app.use(helmet());
+
+// app.use(helmet());
+
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
 
 // Devlopement logging
 if (process.env.NODE_ENV === 'development') {
