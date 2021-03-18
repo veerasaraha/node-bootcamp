@@ -71,7 +71,6 @@ app.use('/api', limiter);
 
 // Test middleware
 app.use((req, res, next) => {
-  console.log(req.cookies);
   req.requestTime = new Date().toISOString();
   next();
 });
