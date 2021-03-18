@@ -28,4 +28,10 @@ const getLoginForm = (req, res) => {
   });
 };
 
-export { getOverview, getTour, getLoginForm };
+const getMyprofile = (req, res) => {
+  res.status(200).render('account', {
+    title: 'Your account',
+  });
+};
+
+export { getOverview, getTour, getLoginForm, getMyprofile };
