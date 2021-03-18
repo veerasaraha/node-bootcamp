@@ -59,6 +59,15 @@ const login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
+const logout = (req, res) => {
+  res.cookie('jwt', '', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+
+  res.status(200).json({ status: 'success' });
+};
+
 const protectRoute = catchAsync(async (req, res, next) => {
   let token;
 
@@ -91,29 +100,32 @@ const protectRoute = catchAsync(async (req, res, next) => {
 });
 
 // only for rendered pages,
-const isLoggedIn = catchAsync(async (req, res, next) => {
+const isLoggedIn = async (req, res, next) => {
   // getting token and check of it's there
   if (req.cookies.jwt) {
-    //Verification token
-    const decoded = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRET);
+    try {
+      //Verification token
+      const decoded = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRET);
 
-    //check if user still exists
+      //check if user still exists
 
-    const currentUser = await User.findById(decoded.id);
-    if (!currentUser) {
+      const currentUser = await User.findById(decoded.id);
+      if (!currentUser) {
+        return next();
+      }
+      //check if user changed password after the token was issued
+      if (currentUser.changePasswordAfter(decoded.iat)) {
+        return next();
+      }
+      //THERE IS A LOGGED In USER
+      res.locals.user = currentUser;
+      return next();
+    } catch (error) {
       return next();
     }
-    //check if user changed password after the token was issued
-    if (currentUser.changePasswordAfter(decoded.iat)) {
-      return next();
-    }
-    //THERE IS A LOGGED In USER
-    res.locals.user = currentUser;
-    return next();
   }
-
   next();
-});
+};
 
 const restrictTo = (...roles) => {
   return (req, res, next) => {
@@ -202,4 +214,4 @@ const updatePassword = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
-export { signUp, isLoggedIn, login, protectRoute, restrictTo, resetPassword, forgotPassword, updatePassword };
+export { signUp, isLoggedIn, login, logout, protectRoute, restrictTo, resetPassword, forgotPassword, updatePassword };
