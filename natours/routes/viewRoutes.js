@@ -10,5 +10,6 @@ viewRouter.get('/', authController.isLoggedIn, viewController.getOverview);
 viewRouter.get('/tour/:slug', authController.isLoggedIn, viewController.getTour);
 viewRouter.get('/login', authController.isLoggedIn, viewController.getLoginForm);
 viewRouter.get('/myprofile', authController.protectRoute, viewController.getMyprofile);
+viewRouter.get('/updateProfile', authController.protectRoute);
 
 export default viewRouter;
