@@ -77,7 +77,7 @@ userSchema.pre('save', async function (next) {
 });
 
 userSchema.methods.verifyPassword = async function (candidatePassword, userPassword) {
-  return bcrypt.compare(candidatePassword, userPassword);
+  return await bcrypt.compare(candidatePassword, userPassword);
 };
 
 userSchema.methods.changePasswordAfter = function (jwtTimestamp) {
@@ -86,7 +86,7 @@ userSchema.methods.changePasswordAfter = function (jwtTimestamp) {
 
     return jwtTimestamp < changedTimestamp; //
   }
-
+  // false means not changed
   return false;
 };
 

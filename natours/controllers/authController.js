@@ -42,15 +42,17 @@ const signUp = catchAsync(async (req, res, next) => {
 
 const login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
+
   //chekc if email and password exist
   if (!email || !password) {
     return next(new AppError('Please provide email and password', 400));
   }
   //check if user exists && password is correct
   const user = await User.findOne({ email }).select('+password');
+  // console.log(password, user.password);
 
   if (!user || !(await user.verifyPassword(password, user.password))) {
-    return next(new AppError('Incorrect email or password ', 401));
+    return next(new AppError('Incorrect email or password', 401));
   }
 
   //if everything ok, send JWT to client
@@ -63,8 +65,9 @@ const protectRoute = catchAsync(async (req, res, next) => {
   // getting token and check of it's there
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     token = req.headers.authorization.split(' ')[1];
+  } else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
   }
-
   if (!token) {
     return next(new AppError('Your are not logged in! please log in to get access', 401));
   }
@@ -84,6 +87,31 @@ const protectRoute = catchAsync(async (req, res, next) => {
   }
   //GRANT ACCESS TO PROTECTED ROUTE
   req.user = currentUser;
+  next();
+});
+
+// only for rendered pages,
+const isLoggedIn = catchAsync(async (req, res, next) => {
+  // getting token and check of it's there
+  if (req.cookies.jwt) {
+    //Verification token
+    const decoded = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRET);
+
+    //check if user still exists
+
+    const currentUser = await User.findById(decoded.id);
+    if (!currentUser) {
+      return next();
+    }
+    //check if user changed password after the token was issued
+    if (currentUser.changePasswordAfter(decoded.iat)) {
+      return next();
+    }
+    //THERE IS A LOGGED In USER
+    res.locals.user = currentUser;
+    return next();
+  }
+
   next();
 });
 
@@ -174,4 +202,4 @@ const updatePassword = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
-export { signUp, login, protectRoute, restrictTo, resetPassword, forgotPassword, updatePassword };
+export { signUp, isLoggedIn, login, protectRoute, restrictTo, resetPassword, forgotPassword, updatePassword };

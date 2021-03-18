@@ -1,6 +1,7 @@
 import * as path from 'path';
 import express from 'express';
 import helmet from 'helmet';
+import cors from 'cors';
 import dotenv from 'dotenv';
 dotenv.config({ path: `${process.cwd()}/natours/.env` });
 import morgan from 'morgan';
@@ -8,6 +9,7 @@ import rateLimit from 'express-rate-limit';
 import xss from 'xss-clean';
 import mongoSanitize from 'express-mongo-sanitize';
 import hpp from 'hpp';
+import cookieParser from 'cookie-parser';
 
 import AppError from './utils/appError.js';
 import globalErrorHandler from './controllers/errorController.js';
@@ -28,6 +30,8 @@ app.use(
   })
 );
 
+app.use(cors());
+
 // Devlopement logging
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
@@ -42,6 +46,7 @@ const limiter = rateLimit({
 
 // Body parser which will allow us to use req.body
 app.use(express.json({ limit: '10kb' }));
+app.use(cookieParser());
 
 // Data sanitization against NoSQL query injection
 app.use(mongoSanitize());
@@ -66,6 +71,7 @@ app.use('/api', limiter);
 
 // Test middleware
 app.use((req, res, next) => {
+  console.log(req.cookies);
   req.requestTime = new Date().toISOString();
   next();
 });
