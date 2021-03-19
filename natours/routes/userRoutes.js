@@ -14,7 +14,7 @@ userRouter.patch('/resetPassword/:token', authController.resetPassword);
 userRouter.use(authController.protectRoute);
 
 userRouter.patch('/updatePassword/', authController.updatePassword);
-userRouter.patch('/updateProfile', userController.updateMyProfile);
+userRouter.patch('/updateProfile', userController.uploadUserPhoto, userController.updateMyProfile);
 userRouter.delete('/deleteProfile', userController.deleteProfile);
 userRouter.get('/getProfile', userController.setUserId, userController.getProfile);
 
