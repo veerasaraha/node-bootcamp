@@ -1,8 +1,65 @@
+import multer from 'multer';
+import sharp from 'sharp';
 import Tour from '../models/tourModel.js';
-import APIFeatures from '../utils/apiFeatures.js';
 import catchAsync from './../utils/cathAsync.js';
 import AppError from '../utils/appError.js';
 import { deleteOne, updateOne, createOne, getOne, getAll } from './hanlderFactory.js';
+
+const multerStorage = multer.memoryStorage();
+
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(new AppError('Not an image! please upload only images.', 400), false);
+  }
+};
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+});
+
+const uploadTourImages = upload.fields([
+  {
+    name: 'imageCover',
+    maxCount: 1,
+  },
+  {
+    name: 'images',
+    maxCount: 3,
+  },
+]);
+
+const resizeTourImages = catchAsync(async (req, res, next) => {
+  if (!req.files.imageCover || !req.files.images) next();
+
+  // 1) Cover Image
+  req.body.imageCover = `tour-${req.params.id}-${Date.now()}-cover.jpeg`;
+
+  await sharp(req.files.imageCover[0].buffer)
+    .resize(2000, 1333)
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toFile(`natours/public/img/tours/${req.body.imageCover}`);
+
+  // 2) Images
+  req.body.images = [];
+  await Promise.all(
+    req.files.images.map(async (file, index) => {
+      const filename = `tour-${req.params.id}-${Date.now()}-${index + 1}.jpeg`;
+
+      await sharp(file.buffer)
+        .resize(2000, 1333)
+        .toFormat('jpeg')
+        .jpeg({ quality: 90 })
+        .toFile(`natours/public/img/tours/${filename}`);
+      req.body.images.push(filename);
+    })
+  );
+
+  next();
+});
 
 const aliasTopTours = (req, res, next) => {
   req.query.limit = '5';
@@ -169,4 +226,6 @@ export {
   getMonthlyPlan,
   getToursWithin,
   getDistances,
+  uploadTourImages,
+  resizeTourImages,
 };
